@@ -52,7 +52,7 @@ const directToCart = () => {
         <ShoppingCart size="20" />
       </button>
     
-      <RouterLink to="/profile" :style="{ backgroundColor: 'white' }"><button class="btn user-btn">
+      <RouterLink to="/signIn" :style="{ backgroundColor: 'white' }"><button class="btn user-btn">
         <span>Account</span>
         <User size="20" />
       </button></RouterLink>

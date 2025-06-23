@@ -1,6 +1,25 @@
 <script setup>
 import { ArrowDown } from 'lucide-vue-next'
 
+
+
+// const listcategories = ref(null)
+// const isLoading = ref(true)
+// const hasError = ref(null)
+
+// onMounted(() => {
+//   const { data, loading, error } = useFetchData('http://localhost:8080/api/category/getAllCategories')
+
+//   categories.value = data.value
+//   isLoading.value = loading.value
+//   hasError.value = error.value
+
+//   console.log("Fetched data:", data.value)
+//   console.log("Loading:", loading.value)
+//   console.log("Error:", error.value)
+// })
+
+
 defineProps({
   listcategories: {
     type: Array,

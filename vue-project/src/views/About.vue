@@ -1,6 +1,9 @@
 <script setup>
 
-import {ref} from 'vue'
+import { useFormatPrice } from '@/composable/useFormatPrice'
+import {ref,computed} from 'vue'
+
+const {formatPrice} = useFormatPrice();
 
 
 
@@ -8,7 +11,6 @@ const data = ref({
         title: 'Áo thun nam thể thao hàng VNXK vải dày mịn - Vải Đốm',
         url: 'https://is4.fwrdassets.com/images/p/fw/z/TFOF-MS4_V1.jpg',
         target: '_blank',
-        price: 20000,
         sale: 0.1,
         selectedProduct: 2,
         cardNumber: 1,
@@ -16,15 +18,18 @@ const data = ref({
             {
                 image: 'https://cavathanquoc.com/wp-content/uploads/2024/06/Ao-thun-tron-cotton-mau-do-man-1.jpg',
                 quantity: 0,
-                textColor: 'Màu Đỏ'
+                textColor: 'Màu Đỏ',
+                price: 20000,
             }, {
                 image: 'https://cavathanquoc.com/wp-content/uploads/2024/06/Ao-thun-tron-cotton-mau-xanh-duong-4-700x933.jpg',
                 quantity: 8,
-                textColor: 'Màu Xanh'
+                textColor: 'Màu Xanh',
+                price: 40000,
             }, {
                 image: 'https://dosi-in.com/images/detailed/42/CDL10_2.jpg',
                 quantity: 2,
-                textColor: 'Màu Đen'
+                textColor: 'Màu Đen',
+                price: 30000,
             }, 
         ],
         listDesc: [
@@ -44,19 +49,53 @@ const data = ref({
 
      }
 const productSelected = ref({});
+const productInCart = ref([])
 
-const handleAddToCart = () => {
-    console.log("Bạn đã ấn thêm vào giỏ hàng")
+        const handleAddToCart = () => {
+        console.log("Bạn đã ấn thêm vào giỏ hàng");
 
-    if(Object.keys(productSelected.value).length === 0){
-        console.log("Bạn chưa chọn sản phẩm nào!")
-        alert("Bạn chưa chọn sản phẩm nào!")
-    } 
-    if(productSelected.value.quantity == 0 ){
-        console.log("Sản phẩm bạn chọn đã hết hàng!")
-        alert("Sản phẩm bạn chọn đã hết hàng!")
-    }
-}
+        if (Object.keys(productSelected.value).length === 0) {
+            console.log("Bạn chưa chọn sản phẩm nào!");
+            alert("Bạn chưa chọn sản phẩm nào!");
+            return;
+        }
+
+        if (productSelected.value.quantity === 0) {
+            console.log("Sản phẩm bạn chọn đã hết hàng!");
+            alert("Sản phẩm bạn chọn đã hết hàng!");
+            return;
+        }
+
+        const foundInCart = productInCart.value.find(
+            item => item.textColor === productSelected.value.textColor
+        );
+
+        const productInList = data.value.listProductDetail.find(
+            item => item.textColor === productSelected.value.textColor
+        );
+
+        if (!productInList || productInList.quantity === 0) {
+            alert("Sản phẩm đã hết hàng trong kho!");
+            return;
+        }
+
+        if (foundInCart) {
+            foundInCart.cartQuantity++;
+        } else {
+            productInCart.value.push({
+            ...productSelected.value,
+            cartQuantity: 1
+            });
+        }
+
+        productInList.quantity--;
+
+        console.log("Giỏ hàng hiện tại:", productInCart.value);
+        }
+
+// const handleCart = computed(() => {
+//     return numberOfProduct.value;
+// })
 
 
 
@@ -64,9 +103,6 @@ const handleAddToCart = () => {
 </script>
 
 <template>
-    <header>
-        <h1>Header</h1>
-    </header>
     <div class="container">
         <div class="list-blog">
             <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi sunt eveniet maxime magni in, nostrum
@@ -74,7 +110,7 @@ const handleAddToCart = () => {
                 qui.</p>
         </div>
         <div id="app">
-            <div class="cart">Giỏ hàng ({{ data.cardNumber }})</div>
+            <div class="cart">Giỏ hàng ({{ handleCart }})</div>
             <div class="product">
                 <div class="product-image">
                     <div class="image" :style="{ width: '250px', height: '330px' }">
@@ -95,12 +131,14 @@ const handleAddToCart = () => {
                     <p class="brand">Thương hiệu: No brand</p>
                     <p class="quantity" v-if="productSelected.quantity > 0">Còn lại: {{ productSelected.quantity }} Sản phẩm</p>
                     <p class="quantity" v-if="productSelected.quantity <= 0">Sản phẩm đã hết hàng</p>
+                    <p class="price">{{ productSelected.price ? formatPrice(productSelected.price) : 'Vui lòng chọn sản phẩm' }}</p>
 
-                    <div class="wrapper-price">
-                        <!-- <div class="final-price">{{ formatFinalPrice }}</div>
-                        <div class="origin-price">{{ formatOriginalPrice }}</div>
-                        <div class="sale-price">-{{sale * 100}}%</div> -->
-                    </div>
+
+                    <!-- <div class="wrapper-price">
+                        <div class="final-price">{{ formatFinalPrice }}</div>
+                        <div class="origin-price">{{ formatPrice }}</div>
+                        <div class="sale-price">-{{sale * 100}}%</div>
+                    </div> -->
                     <div class="wrapper-color">
                         <div class="text">Màu sắc</div>
                         <div class="list-color">

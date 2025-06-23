@@ -14,20 +14,7 @@ const {loading, data, error} = useFetchData('http://localhost:8080/api/category/
 
 <template>
   <div class="nav">
-    <Header></Header>
-    <NavBar
-      :listcategories="data"
-      :isLoading="loading"
-      :isError="error"
-    />
-  </div>
-
-  <div class="container">
-    <router-view 
-      :listcategories="data"
-      :isLoading="loading"
-      :isError="error"
-    />
+    <router-view></router-view>
   </div>
 </template>
 

@@ -9,7 +9,7 @@ import SupportIcon from './icons/IconSupport.vue'
 const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
 
 const hello = "MY NAME IS QUANG";
-import {ref,reactive} from 'vue';
+import {ref,reactive, computed} from 'vue';
 
 
 const book = reactive({
@@ -19,6 +19,16 @@ const book = reactive({
 });
 
 const show = ref(false);
+
+const student = reactive({ name: 'Ngo Van Giang'});
+const student2 = ref({ name: 'Ngo Van Giang'});
+
+student = { name: 'Ngo Van Quang'}
+student2.value = { name: 'Ngo Van Quang'}
+
+const total = computed(() => {
+
+})
 
 
 const count = ref();
@@ -31,6 +41,7 @@ const increase = () => {
   count.value++;
 }
 
+// watch( () => props.categoryId,()) => { print(...)}, { deep: true } )
 </script>
 <template>
 
