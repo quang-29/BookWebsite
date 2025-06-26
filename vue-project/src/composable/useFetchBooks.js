@@ -17,6 +17,6 @@ export function useFetchBooks(url){
     }
     fetchBooks(url)
     return {
-        books, loading, error
+        books, loading, error, fetchBooks
     };
 }

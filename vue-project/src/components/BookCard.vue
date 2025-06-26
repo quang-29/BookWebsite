@@ -82,9 +82,22 @@ const formatPrice = (price) => {
     display: flex;
     align-items: center;
     flex-direction: column;
+    margin-top: 10px;
     padding: 5px;
     width: calc((100% - 4 * 16px) / 5);
+    border: 1px solid transparent; /* Thêm dòng này */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    margin-top: 20px;
     
+    
+}
+.book-item:hover{
+    background-color: transparent;
+    border-radius: 12px;
+    border: 1px solid #f75454;
+    transform: scale(1.05)
 }
 .book-image {
     border-radius: 10px;

@@ -1,24 +1,15 @@
 <script setup>
 import { ArrowDown } from 'lucide-vue-next'
+import { watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 
 
-// const listcategories = ref(null)
-// const isLoading = ref(true)
-// const hasError = ref(null)
+const router = useRouter()
+const handeDirect = (categoryName) =>{
+  router.push({ name: 'categoryBook', params: { categoryName } })
 
-// onMounted(() => {
-//   const { data, loading, error } = useFetchData('http://localhost:8080/api/category/getAllCategories')
-
-//   categories.value = data.value
-//   isLoading.value = loading.value
-//   hasError.value = error.value
-
-//   console.log("Fetched data:", data.value)
-//   console.log("Loading:", loading.value)
-//   console.log("Error:", error.value)
-// })
-
+}
 
 defineProps({
   listcategories: {
@@ -55,14 +46,25 @@ defineProps({
         <li v-else-if="isLoading">Đang tải danh mục...</li>
         <li v-else-if="listcategories.length === 0">Không có danh mục</li>
         <li v-else v-for="category in listcategories" :key="category.id">
-          {{ category.categoryName }}
+          <div class="category-card" @click="handeDirect(category.categoryName)">
+            {{ category.categoryName }}
+          </div>
         </li>
       </ul>
     </div>
 
-    <button class="btn"><span>Discount Deals</span></button>
-    <button class="btn"><span>Gifs & Others</span></button>
-    <button class="btn"><span>Events</span></button>
+    <RouterLink to="/discount" :style="{ backgroundColor: 'white' }">
+      <button class="btn"><span>Discount Deals</span></button>
+    </RouterLink>
+    
+    <RouterLink :style="{ backgroundColor: 'white' }">
+      <button class="btn"><span>Gifs & Others</span></button>
+    </RouterLink>
+    
+    <RouterLink to="/event" :style="{ backgroundColor: 'white' }">
+      <button class="btn"><span>Events</span></button>
+    </RouterLink>
+    
 
     <RouterLink to="/about" :style="{ backgroundColor: 'white' }">
       <button class="btn">

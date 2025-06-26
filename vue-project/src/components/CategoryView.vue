@@ -42,7 +42,7 @@ defineProps({listcategories: Array,
               <!-- <div class="hbutton" @click="handleDirectCategoryDetail(category.id)">
                 <button class="btn-seemore">Xem Thêm</button>
               </div> -->
-              <RouterLink :to="`/categoryBook/${category.id}`" class="hbutton">
+              <RouterLink :to="`/categoryBook/${category.categoryName}`" class="custom-link">
                  <button class="btn-seemore">Xem Thêm</button>
               </RouterLink>
             </div>
@@ -118,10 +118,14 @@ defineProps({listcategories: Array,
 .category-title {
     font-size: 24px;
 }
-.hbutton{
+.custom-link{
     margin-top: 50px;
     z-index: 10;
 }
+.custom-link:hover{
+  background-color: transparent;
+}
+
 .btn-seemore {
     padding: 8px 10px;
     border: none;

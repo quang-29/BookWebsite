@@ -1,11 +1,12 @@
 import { ref } from 'vue'
 
-export function useFetchData(url) {
+export function useFetchData() {
   const loading = ref(true)
   const data = ref(null)
   const error = ref(null)
 
-  const fetchData = async () => {
+  const fetchData = async (url) => {
+    loading.value = true
     try {
       const response = await fetch(url)
       const json = await response.json()
@@ -17,11 +18,10 @@ export function useFetchData(url) {
     }
   }
 
-  fetchData()
-
   return {
     loading,
     data,
-    error
+    error,
+    fetchData
   }
 }

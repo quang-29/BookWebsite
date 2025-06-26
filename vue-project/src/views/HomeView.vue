@@ -13,8 +13,9 @@ const categories = ref(null)
 const isLoading = ref(true)
 const hasError = ref(null)
 
-onMounted( async() => {
-  const {loading,data,error} = useFetchData('http://localhost:8080/api/category/getAllCategories')
+const { loading, data, error, fetchData } = useFetchData()
+onMounted(async () => {
+  await fetchData('http://localhost:8080/api/category/getAllCategories')
   categories.value = data.value
   isLoading.value = loading.value
   hasError.value = error.value
@@ -28,12 +29,6 @@ onMounted( async() => {
   <main>
 
     <div class="nav">
-      <Header></Header>
-      <NavBar
-      :listcategories="categories"
-      :isLoading="isLoading"
-      :isError="hasError"
-      />
       <ImageView></ImageView>
       <CategoryView :listcategories="categories"
                   :isLoading="isLoading"

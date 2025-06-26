@@ -68,7 +68,7 @@ const routes = [
   }
   ,
   {
-    path: '/categoryBook/:id',
+    path: '/categoryBook/:categoryName',
     name: 'categoryBook',
     component: () => import(/* webpackChunkName: "profile" */"@/views/ListVerticalBook.vue")
   },
@@ -82,6 +82,17 @@ const routes = [
     name: 'signUp',
     component: () => import(/* webpackChunkName: "profile" */"@/views/SignUp.vue")
   },
+  {
+    path: '/discount',
+    name: 'discount',
+    component: () => import(/* webpackChunkName: "profile" */"@/views/Discount.vue")
+  },
+  {
+    path: '/event',
+    name: 'event',
+    component: () => import(/* webpackChunkName: "profile" */"@/views/Event.vue")
+  }
+    
   ]
 
 const router = createRouter({
