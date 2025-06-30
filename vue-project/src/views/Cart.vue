@@ -1,27 +1,25 @@
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Trash } from 'lucide-vue-next'
 import { useFormatPrice } from '@/composable/useFormatPrice'
 
-
 const { formatPrice } = useFormatPrice()
 const cartItems = ref([])
-onMounted(async() => {
-    try {
-        const response = await fetch('http://localhost:8080/api/book/getAllBooks?pageSize=4')
-        const json = await response.json();
-        cartItems.value = json.content.map(item => ({
-        ...item,
-        checked: false,
-        quantity: 1
-        }))
-    } catch (err) {
-        console.error("Failed to fetch cart: ", err)
-    }
-    })
+
+onMounted(() => {
+  const list = localStorage.getItem('list')
+  const data = list ? JSON.parse(list) : []
+
+  cartItems.value = data.map(item => ({
+    book: item.book,
+    quantity: item.number,  // <-- chuyển từ number để sử dụng trong component
+    checked: false
+  }))
+})
 
 const allChecked = computed({
-  get: () => cartItems.value.every(item => item.checked),
+  get: () => cartItems.value.length > 0 && cartItems.value.every(item => item.checked),
   set: (val) => {
     cartItems.value.forEach(item => (item.checked = val))
   }
@@ -30,17 +28,35 @@ const allChecked = computed({
 const totalPrice = computed(() =>
   cartItems.value
     .filter(item => item.checked)
-    .reduce((sum, item) => sum + item.price * item.quantity, 0)
+    .reduce((sum, item) => sum + item.book.price * item.quantity, 0)
 )
 
-const increaseQty = (item) => item.quantity++
-const decreaseQty = (item) => {
-  if (item.quantity > 1) item.quantity--
+const increaseQty = (item) => {
+  item.quantity++
+  syncToLocalStorage()
 }
+
+const decreaseQty = (item) => {
+  if (item.quantity > 1) {
+    item.quantity--
+    syncToLocalStorage()
+  }
+}
+
 const removeItem = (id) => {
-  cartItems.value = cartItems.value.filter(item => item.id !== id)
+  cartItems.value = cartItems.value.filter(item => item.book.id !== id)
+  syncToLocalStorage()
+}
+
+const syncToLocalStorage = () => {
+  const savedData = cartItems.value.map(item => ({
+    book: item.book,
+    number: item.quantity
+  }))
+  localStorage.setItem('list', JSON.stringify(savedData))
 }
 </script>
+
 
 <template>
   <div class="cart-wrapper">
@@ -54,12 +70,12 @@ const removeItem = (id) => {
       <div class="cart-item" v-for="item in cartItems" :key="item.id">
         <input type="checkbox" v-model="item.checked" />
 
-        <img :src="item.imagePath" class="thumb" />
+        <img :src="item.book.imagePath" class="thumb" />
 
         <div class="item-info">
-          <p class="title">{{ item.title }}</p>
+          <p class="title">{{ item.book.title }}</p>
           <div class="prices">
-            <span class="sale">{{ formatPrice(item.price) }}</span>
+            <span class="sale">{{ formatPrice(item.book.price) }}</span>
             <span class="original">500.000đ</span>
           </div>
         </div>
@@ -71,10 +87,11 @@ const removeItem = (id) => {
         </div>
 
         <div class="subtotal">
-          {{ formatPrice(item.price * item.quantity) }}
+          {{ formatPrice(item.book.price * item.quantity) }}
         </div>
 
-        <button class="delete" @click="removeItem(item.id)"><Trash /></button>
+        <button class="delete" @click="removeItem(item.book.id)"><Trash /></button>
+
       </div>
     </div>
 
@@ -86,9 +103,8 @@ const removeItem = (id) => {
         <p><strong>Tổng Số Tiền (gồm VAT):</strong></p>
         <h2>{{ formatPrice(totalPrice) }}</h2>
         <button class="checkout-btn" :disabled="totalPrice === 0">
-          THANH TOÁN
+          ĐẶT HÀNG
         </button>
-        <p class="note">(*Giảm giá trên web chỉ áp dụng cho bán lẻ)</p>
       </div>
     </div>
   </div>

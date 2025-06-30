@@ -14,9 +14,9 @@ const directToCart = () => {
   <header class="header-container">
 
     <div class="logo-header">
-        <div class="logo-container">
+        <RouterLink to="/" class="logo-container">
             <img src="../assets/images/logo.jpeg" alt="Logo" class="logo-image" />
-        </div>
+        </RouterLink>
         <div class="brand-header">
             <span class="logo-text">Mickey's Bookstore</span>
         </div>
@@ -81,6 +81,9 @@ const directToCart = () => {
 
 .logo-container {
   flex-shrink: 0;
+}
+.logo-container:hover{
+  background-color: white;
 }
 .logo-image {
   width: 100px;

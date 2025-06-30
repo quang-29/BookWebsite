@@ -15,7 +15,7 @@ const hasError = ref(null)
 
 const { loading, data, error, fetchData } = useFetchData()
 onMounted(async () => {
-  await fetchData('http://localhost:8080/api/category/getAllCategories')
+  await fetchData('http://localhost:8080/api/v1/category/all')
   categories.value = data.value
   isLoading.value = loading.value
   hasError.value = error.value

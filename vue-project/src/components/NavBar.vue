@@ -6,8 +6,8 @@ import { useRouter } from 'vue-router'
 
 
 const router = useRouter()
-const handeDirect = (categoryName) =>{
-  router.push({ name: 'categoryBook', params: { categoryName } })
+const handleDirect = (id) =>{
+  router.push({ name: 'categoryBook', params: { id } })
 
 }
 
@@ -46,8 +46,8 @@ defineProps({
         <li v-else-if="isLoading">Đang tải danh mục...</li>
         <li v-else-if="listcategories.length === 0">Không có danh mục</li>
         <li v-else v-for="category in listcategories" :key="category.id">
-          <div class="category-card" @click="handeDirect(category.categoryName)">
-            {{ category.categoryName }}
+          <div class="category-card" @click="handleDirect(category.id)">
+            {{ category.name }}
           </div>
         </li>
       </ul>

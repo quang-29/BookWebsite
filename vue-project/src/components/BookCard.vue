@@ -5,20 +5,10 @@ import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { computed } from 'vue';
 import { useFetchBooks } from '@/composable/useFetchBooks';
-// const books = ref([]);
 
-// onMounted( async () => {
-//     try {
-//         const response = await fetch('http://localhost:8080/api/book/getAllBooks?pageSize=10');
-//         const json = await response.json();
-//         books.value = json.content;
-//         console.log(json.content);
-//     } catch(err) {
-//         console.log("Error to fetch data book", err)
-//     }
-// })
 
-const {loading, books, error} = useFetchBooks('http://localhost:8080/api/book/getAllBooks?pageSize=10')
+
+const {loading, books, error} = useFetchBooks('http://localhost:8080/api/v1/book/all')
 console.log(books);
 
 const formatPrice = (price) => {
@@ -27,6 +17,7 @@ const formatPrice = (price) => {
     }
     return price.toLocaleString('vi-VN'); 
 };
+
 
 
 </script>
@@ -39,20 +30,16 @@ const formatPrice = (price) => {
 
         <div class="book-container">
             <div class="book-list">
-                <RouterLink class="book-item" v-for="book in books" :to="`/books/${book.id}`" :key="book.id">
+                <RouterLink class="book-item" v-for="book in books" :to="`/book/${book.id}`" :key="book.id">
                     <div class="book-image" 
                     :style="{
-                        backgroundImage: `url(${book.imagePath})`,
-                        width: '250px',
-                        height: '350px',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundImage: `url(${book.imagePath})`
                     }"></div>
 
                     <div class="book-infor">
-                        <p class="book-author">{{book.author}}</p>
+                        <p class="book-author">{{book.authorName}}</p>
                         <h3 class="book-title"> {{book.title}}</h3>
-                        <p class="book-price">{{formatPrice(book.price)}}đ <span class="book-price discount">400.000đ</span></p>
+                        <p class="book-price">{{formatPrice(book.price *0.3)}}đ <span class="book-price discount">{{formatPrice(book.price)}}đ</span></p>
                         <p class="review"></p>
                     </div>
                 </RouterLink>
@@ -100,17 +87,22 @@ const formatPrice = (price) => {
     transform: scale(1.05)
 }
 .book-image {
-    border-radius: 10px;
     width: 100%;
+    aspect-ratio: 2 / 3;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
 }
 .book-infor {
-    width: 250px;
+    width: 100%;
     font-size: 16px;
     color: black;
     padding: 20px 10px;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    overflow: hidden;
 }
 .book-author {
     white-space: nowrap;

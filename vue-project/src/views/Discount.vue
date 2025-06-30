@@ -1,9 +1,9 @@
-<script setup></script>
+<script setup>
+import Module from './Module.vue';
+</script>
 <template>
-    <h4>Discount</h4>
+    <Module />
 </template>
 <style>
-h4 {
-    color: black;
-}
+
 </style>

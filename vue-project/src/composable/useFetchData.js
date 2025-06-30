@@ -10,7 +10,7 @@ export function useFetchData() {
     try {
       const response = await fetch(url)
       const json = await response.json()
-      data.value = json.data
+      data.value = json.content
     } catch (e) {
       error.value = e
     } finally {

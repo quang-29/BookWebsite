@@ -28,7 +28,7 @@ defineProps({listcategories: Array,
             <div
               class="categorylink"
               :style="{
-                backgroundImage: `url(${category.category_img})`,
+                backgroundImage: `url(${category.thumbnail})`,
                 width: '350px',
                 height: '250px',
                 backgroundSize: 'cover',
@@ -37,12 +37,12 @@ defineProps({listcategories: Array,
             >
               <div class="wrapper"></div>
               <div class="htitle">
-                <span class="category-title">{{ category.categoryName }}</span>
+                <span class="category-title">{{ category.name }}</span>
               </div>
               <!-- <div class="hbutton" @click="handleDirectCategoryDetail(category.id)">
                 <button class="btn-seemore">Xem Thêm</button>
               </div> -->
-              <RouterLink :to="`/categoryBook/${category.categoryName}`" class="custom-link">
+              <RouterLink :to="`/categoryBook/${category.id}`" class="custom-link">
                  <button class="btn-seemore">Xem Thêm</button>
               </RouterLink>
             </div>

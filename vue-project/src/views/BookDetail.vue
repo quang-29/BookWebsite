@@ -1,27 +1,46 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-
+import Swal from 'sweetalert2'
 const route = useRoute()
 const book = ref({})
 const quantity = ref(1)
 
 onMounted(async () => {
   try {
-    const response = await fetch(`http://localhost:8080/api/book/${route.params.id}`)
+    const response = await fetch(`http://localhost:8080/api/v1/book/${route.params.id}`)
     const json = await response.json()
-    book.value = json.data
+    book.value = json
   } catch (error) {
     console.error('Failed to fetch book:', error)
   }
 })
 
 const formatPrice = (price) => {
-  console.log('formatPrice called with:', price)
   if (!price || isNaN(price)) return 'N/A'
   return Number(price).toLocaleString('vi-VN') + 'đ'
 }
 
+const handleAddCart = () => {
+  localStorage.removeItem("cart")
+  const listBook = localStorage.getItem('list')
+  const list = listBook ? JSON.parse(listBook) : []
+  const existingItem = list.find(item => item.book.id === book.value.id)
+  if (existingItem) {
+    existingItem.number += quantity.value
+  } else {
+    list.push({
+      book: book.value,
+      number: quantity.value
+    })
+  }
+  localStorage.setItem('list', JSON.stringify(list))
+
+  Swal.fire({
+    title: "Thêm vào giỏ hàng thành công!",
+    icon: "success"
+  })
+}
 
 const increaseQty = () => quantity.value++
 const decreaseQty = () => {
@@ -40,28 +59,39 @@ const decreaseQty = () => {
 
     <div class="right">
       <h1 class="title">{{ book.title }}</h1>
-      <p class="author">Tác giả: <strong>{{ book.author }}</strong></p>
+      <p class="author">Tác giả: <strong>{{ book.authorName }}</strong></p>
+
+      <p class="isbn">Mã ISBN: <strong>{{ book.isbn }}</strong></p>
+      <div class="status">
+        <p>Tình trạng: 
+          <span v-if="book.stock > 0">Còn hàng</span>
+          <span v-else>Hết hàng</span>
+        </p>
+       
+        <p>Nhà xuất bản: <span>
+          {{ book.publisher}}
+        </span></p>
+      </div>
 
       <div class="price-block">
-        <span class="original-price">{{ formatPrice(book.price * 1.3) }}</span>
-        <span class="sale-price">{{ formatPrice(book.price) }}</span>
+        <span class="original-price">{{ formatPrice(book.price) }}</span>
+        <span class="sale-price">{{ formatPrice(book.price * 1.3) }}</span>
         <span class="discount">-30%</span>
       </div>
 
       <div class="qty">
-        <button @click="decreaseQty" class="btn_quantity">-</button>
-        <!-- <input type="text" v-model="quantity" readonly /> -->
+        <button @click="decreaseQty" class="btn_quantity"><p>-</p></button>
          <span class="quantity">{{quantity}}</span>
-        <button @click="increaseQty" class="btn_quantity">+</button>
+        <button @click="increaseQty" class="btn_quantity"><p>+</p></button>
       </div>
 
       <div class="actions">
-        <button class="add-to-cart">THÊM VÀO GIỎ</button>
+        <button class="add-to-cart" @click="handleAddCart()">THÊM VÀO GIỎ</button>
         <button class="buy-now">MUA NGAY</button>
       </div>
 
       <div class="description">
-        <span>MÔ TẢ</span>
+        <span class="book-description">MÔ TẢ:</span>
         <p>{{ book.description }}</p>
       </div>
     </div>
@@ -106,17 +136,24 @@ const decreaseQty = () => {
 }
 
 .title {
-  font-size: 38px;
+  font-size: 2rem;
   margin-bottom: 8px;
   color: black;
+   font-weight: 600;
 }
 
 .author {
-  font-size: 16px;
+  font-size: 1.25rem;
   margin-bottom: 16px;
   color: black;
+  font-weight: 600;
 }
-
+.isbn {
+  color: black;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
 .price-block {
   display: flex;
   align-items: center;
@@ -125,14 +162,16 @@ const decreaseQty = () => {
 }
 
 .original-price {
-  text-decoration: line-through;
-  color: #888;
+  font-size: 1.75rem;
+  color: #d63532;
+  
 }
 
 .sale-price {
-  font-size: 24px;
+  font-size: 1.75rem;
   font-weight: bold;
-  color: #e53935;
+  text-decoration: line-through;
+  color: #888;
 }
 
 .discount {
@@ -169,40 +208,61 @@ const decreaseQty = () => {
 
 .actions {
   display: flex;
-  gap: 16px;
+  column-gap: 16px;
   margin-bottom: 32px;
+  align-items: center;
 }
 
 .add-to-cart {
   padding: 12px 20px;
-  background-color: #673ab7;
+  background-color: #f36f47;
   color: white;
   border: none;
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
+  height: 60px;
 }
 
 .buy-now {
   padding: 12px 20px;
-  background-color: #f44336;
+  background-color: #19479c;
   color: white;
   border: none;
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
+  height: 60px;
 }
 
 .description {
   color: #333;
-  font-size: 30px;
+  font-size: 1.15rem;
+}
+
+.description .book-description{
+  font-weight: 600;
 }
 .quantity {
   color: black;
-  font-size: 26px;
+  font-size: 1.25rem;
   align-items: center;
 }
-/* .btn_quantity {
-  padding: 10px;
-} */
+.btn_quantity {
+  padding: 8px;
+  font-size: 1.5rem;
+
+}
+.status {
+  display: flex;
+  align-items: center;
+  column-gap: 40px;
+  font-size: 1.25rem;
+  color: black;
+  margin-bottom: 10px;
+}
+.status p {
+   font-weight: 600;
+}
+
 </style>

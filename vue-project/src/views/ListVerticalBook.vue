@@ -8,15 +8,14 @@ const books = ref([])
 
 const fetchBooksByCategory = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/api/book/getAllBooksByCategory/${route.params.categoryName}`);
+    const response = await fetch(`http://localhost:8080/api/v1/book/category/${route.params.id}`);
     const json = await response.json();
-    books.value = json.content;
-    console.log(json.content);
+    books.value = json;
   } catch (error) {
     console.error("Error fetching books:", error);
   }
 };
-watch(() => route.params.categoryName, () => {
+watch(() => route.params.id, () => {
   fetchBooksByCategory();
 })
 
@@ -38,7 +37,7 @@ const formatPrice = (price) => {
     {{ route.params.categoryName }}
   </div>
   <div class="book-grid">
-    <RouterLink class="book-card" v-for="book in books" :key="book.id" :to="`/books/${book.id}`">
+    <RouterLink class="book-card" v-for="book in books" :key="book.id" :to="`/book/${book.id}`">
       <img
         class="book-image"
         :src="book.imagePath || 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg'"
@@ -46,7 +45,7 @@ const formatPrice = (price) => {
       />
       <div class="book-info">
         <h3 class="book-title">{{ book.title }}</h3>
-        <p class="book-author">Tác giả: {{ book.author }}</p>
+        <p class="book-author">Tác giả: {{ book.authorName }}</p>
         <p class="book-price">Giá: {{ formatPrice(book.price) }}đ</p>
         <p class="book-publisher">NXB: {{ book.publisher }}</p>
         <p class="book-isbn">ISBN: {{ book.isbn }}</p>

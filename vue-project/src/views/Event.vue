@@ -1,6 +1,8 @@
-<script setup></script>
+<script setup>
+import Course from './Course.vue';
+</script>
 <template>
-    <h4>Event</h4>
+    <Course />
 </template>
 <style>
 h4 {
