@@ -309,18 +309,6 @@ const modules = ref([
   align-items: center;
   gap: 1rem;
 }
-:deep(.course-id) {
-  font-size: 1.15rem;
-  line-height: 2rem;
-  color: #2563eb;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #dbeafe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 :deep(.course-id p) {
   font-weight: 600;
 }

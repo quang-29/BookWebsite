@@ -2,11 +2,56 @@
 
 import { useRouter } from 'vue-router';
 import { ShoppingCart, User, Search, ArrowDown } from 'lucide-vue-next'
+import { watch } from 'vue';
+import {ref, onMounted} from 'vue'
+import { ElMessageBox } from 'element-plus'
 
 const router = useRouter();
 
 const directToCart = () => {
   router.push('/cart')
+}
+
+const user = ref(null)
+const isLoggedIn = ref(false)
+
+onMounted(() => {
+  const data = localStorage.getItem('user-info')
+  if (data) {
+    try {
+      user.value = JSON.parse(data)
+      isLoggedIn.value = true
+      console.log(user.value)
+    } catch (error) {
+      console.error('Lỗi phân tích user-info:', error)
+      isLoggedIn.value = false
+    }
+  } else {
+    isLoggedIn.value = false
+  }
+})
+
+
+const handleUserMenu = (command) => {
+  switch (command) {
+    case 'settings':
+      router.push('/profile')
+      break
+    case 'address':
+      router.push('/address') 
+      break
+    case 'logout':
+      ElMessageBox.confirm('Bạn có chắc muốn đăng xuất?', 'Xác nhận', {
+        confirmButtonText: 'Đăng xuất',
+        cancelButtonText: 'Hủy',
+        type: 'warning',
+      }).then(() => {
+        localStorage.removeItem('user-info')
+        localStorage.removeItem('token')
+        router.push('/signIn')
+      })
+      break
+  }
 }
 </script>
 
@@ -52,11 +97,27 @@ const directToCart = () => {
         <ShoppingCart size="20" />
       </button>
     
-      <RouterLink to="/signIn" :style="{ backgroundColor: 'white' }"><button class="btn user-btn">
-        <span>Account</span>
-        <User size="20" />
-      </button></RouterLink>
-      
+     
+      <el-dropdown v-if="isLoggedIn" trigger="click" @command="handleUserMenu">
+        <button class="btn user-btn">
+          <User size="20" />
+          <span>{{ user.username }}</span>
+        </button>
+        <template #dropdown>
+          <el-dropdown-menu class="sub_menu">
+            <el-dropdown-item command="settings">Cài đặt</el-dropdown-item>
+            <el-dropdown-item command="address">Địa chỉ</el-dropdown-item>
+            <el-dropdown-item divided command="logout">Đăng xuất</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
+      <RouterLink v-else to="/signIn" :style="{ backgroundColor: 'white' }">
+        <button class="btn user-btn">
+          <User size="20" />
+          <span>Account</span>
+        </button>
+      </RouterLink>     
     </div>
   </header>
 </template>
@@ -77,6 +138,11 @@ const directToCart = () => {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+.sub_menu{
+  margin-right: 10px;
+  width: 200px;
+  height: 120px;
 }
 
 .logo-container {

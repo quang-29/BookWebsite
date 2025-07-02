@@ -93,7 +93,7 @@ console.log(props.module)
   gap: 1rem;
 }
 .course-id {
-  font-size: 1.15rem;
+  font-size: 1rem;
   line-height: 2rem;
   color: #2563eb;
   width: 40px;

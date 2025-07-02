@@ -3,21 +3,33 @@
 import { ref, computed, onMounted } from 'vue'
 import { Trash } from 'lucide-vue-next'
 import { useFormatPrice } from '@/composable/useFormatPrice'
-
+import { useFetchBookById } from '@/composable/useFetchBookById'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+import Header from '@/components/Header.vue'
+import NavBar from '@/components/NavBar.vue'
 const { formatPrice } = useFormatPrice()
 const cartItems = ref([])
 
-onMounted(() => {
+// Lay chi tiet thong tin sach dua vao id cua sach o localstorage
+onMounted(async () => {
   const list = localStorage.getItem('list')
   const data = list ? JSON.parse(list) : []
-
-  cartItems.value = data.map(item => ({
-    book: item.book,
-    quantity: item.number,  // <-- chuyển từ number để sử dụng trong component
-    checked: false
-  }))
+  console.log(data)
+  cartItems.value = await Promise.all(
+    data.map(async (item) => {
+      const book = await useFetchBookById(item.id) 
+      return {
+        book,
+        quantity: item.number,
+        checked: false
+      }
+    })
+  )
+console.log(cartItems)
 })
 
+// Kiem tra nhung sach nao duoc check
 const allChecked = computed({
   get: () => cartItems.value.length > 0 && cartItems.value.every(item => item.checked),
   set: (val) => {
@@ -25,36 +37,100 @@ const allChecked = computed({
   }
 })
 
+// Tinh tong gia cua cac sach da duoc check
 const totalPrice = computed(() =>
   cartItems.value
     .filter(item => item.checked)
     .reduce((sum, item) => sum + item.book.price * item.quantity, 0)
 )
 
-const increaseQty = (item) => {
-  item.quantity++
-  syncToLocalStorage()
-}
-
-const decreaseQty = (item) => {
-  if (item.quantity > 1) {
-    item.quantity--
-    syncToLocalStorage()
-  }
-}
-
+// Xoa sach ra khoi gio hang
 const removeItem = (id) => {
   cartItems.value = cartItems.value.filter(item => item.book.id !== id)
   syncToLocalStorage()
 }
 
+// Tang so luong sach
+const increaseQty = (item) => {
+  item.quantity++
+  syncToLocalStorage()
+}
+
+// Giam so luong sach
+const decreaseQty = (item) => {
+  if (item.quantity > 1) {
+    item.quantity--
+    syncToLocalStorage()
+  } else {
+    console.log("Xoa khoi gio hang")
+    removeItem(item.book.id)
+  }
+}
+
+// Dong bo thay doi o localstoreage
 const syncToLocalStorage = () => {
   const savedData = cartItems.value.map(item => ({
-    book: item.book,
+    id: item.book.id,
     number: item.quantity
   }))
   localStorage.setItem('list', JSON.stringify(savedData))
 }
+
+const handlePlaceOrder = async () => {
+  const list = localStorage.getItem('list');
+  const data = list ? JSON.parse(list) : [];
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Bạn chưa đăng nhập! Vui lòng đăng nhập để mua hàng');
+    return;
+  }
+
+  // Lay userID tu localstorage
+  const user_info = localStorage.getItem('user-info')
+  const userId = JSON.parse(user_info).id
+
+  const formdata = {
+    userId: userId,
+    address: "Roman Plaza",
+    bookCart: data
+  };
+
+  try {
+
+    Swal.fire({
+      title: 'Đang xử lý đơn hàng...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    const response = await axios.post('http://localhost:8080/api/v1/order/placeOrder', formdata, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    setTimeout(() => {
+      Swal.close(); 
+      localStorage.removeItem('list');
+      cartItems.value = [];
+
+      Swal.fire({
+        title: 'Đặt hàng thành công!',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+    }, 2000); 
+  } catch (error) {
+    console.error('Đặt hàng thất bại:', error);
+    Swal.close();
+    Swal.fire({
+      title: 'Lỗi',
+      text: 'Đặt hàng thất bại. Vui lòng thử lại!',
+      icon: 'error'
+    });
+  }
+};
+
 </script>
 
 
@@ -68,6 +144,7 @@ const syncToLocalStorage = () => {
       </div>
 
       <div class="cart-item" v-for="item in cartItems" :key="item.id">
+        
         <input type="checkbox" v-model="item.checked" />
 
         <img :src="item.book.imagePath" class="thumb" />
@@ -76,7 +153,7 @@ const syncToLocalStorage = () => {
           <p class="title">{{ item.book.title }}</p>
           <div class="prices">
             <span class="sale">{{ formatPrice(item.book.price) }}</span>
-            <span class="original">500.000đ</span>
+            <span class="original">{{ formatPrice(item.book.price * 1.3) }}</span>
           </div>
         </div>
 
@@ -102,7 +179,7 @@ const syncToLocalStorage = () => {
         <p>{{ formatPrice(totalPrice) }}</p>
         <p><strong>Tổng Số Tiền (gồm VAT):</strong></p>
         <h2>{{ formatPrice(totalPrice) }}</h2>
-        <button class="checkout-btn" :disabled="totalPrice === 0">
+        <button class="checkout-btn" :disabled="totalPrice === 0" @click="handlePlaceOrder">
           ĐẶT HÀNG
         </button>
       </div>

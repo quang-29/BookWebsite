@@ -149,6 +149,7 @@ defineProps({listcategories: Array,
   height: 200px;
   margin-bottom: 120px;
   transition: all 0.4s ease;
+
 }
 .category-item:hover{
     transform: scale(1.05) translateY(-2px);

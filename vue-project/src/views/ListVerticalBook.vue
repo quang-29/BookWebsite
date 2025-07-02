@@ -2,6 +2,7 @@
 
 import { onMounted,ref,watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
+import BookItem from '@/components/book/BookItem.vue';
 const route = useRoute();
 const books = ref([])
 
@@ -37,21 +38,7 @@ const formatPrice = (price) => {
     {{ route.params.categoryName }}
   </div>
   <div class="book-grid">
-    <RouterLink class="book-card" v-for="book in books" :key="book.id" :to="`/book/${book.id}`">
-      <img
-        class="book-image"
-        :src="book.imagePath || 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg'"
-        :alt="book.title"
-      />
-      <div class="book-info">
-        <h3 class="book-title">{{ book.title }}</h3>
-        <p class="book-author">Tác giả: {{ book.authorName }}</p>
-        <p class="book-price">Giá: {{ formatPrice(book.price) }}đ</p>
-        <p class="book-publisher">NXB: {{ book.publisher }}</p>
-        <p class="book-isbn">ISBN: {{ book.isbn }}</p>
-        <p class="book-language">Ngôn ngữ: {{ book.language }}</p>
-      </div>
-    </RouterLink>
+    <BookItem v-for="book in books" :key="book.id" :to="`/book/${book.id}`" :book="book" />
   </div>
 </template>
 
@@ -68,6 +55,7 @@ const formatPrice = (price) => {
   justify-content: center;
   padding: 30px;
   background-color: #fdfdfd;
+  /* justify-content: flex-start; */
 }
 
 .book-card {

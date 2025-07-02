@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { compile } from 'vue'
+import MainLayout from '@/layouts/MainLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
 
 const requireAuth = (to, from, next) => {
@@ -21,84 +23,90 @@ const requireAuth = (to, from, next) => {
 //   }
 // }
 
+
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
-    meta: {requireAuth: true},
+    component: MainLayout,
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: HomeView,
+        meta: { requireAuth: true }
+      },
+      {
+        path: 'category',
+        name: 'category',
+        component: () => import('@/views/About.vue'),
+        meta: { requireAuth: true }
+      },
+      {
+        path: 'about',
+        name: 'about',
+        component: () => import('@/views/About.vue')
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: () => import('@/views/Profile.vue'),
+        meta: { requireAuth: true }
+      },
+      {
+        path: 'cart',
+        name: 'cart',
+        component: () => import('@/views/Cart.vue')
+      },
+      {
+        path: 'book/:id',
+        name: 'bookDetail',
+        component: () => import('@/views/BookDetail.vue')
+      },
+      {
+        path: 'categoryBook/:id',
+        name: 'categoryBook',
+        component: () => import('@/views/ListVerticalBook.vue')
+      },
+      {
+        path: 'discount',
+        name: 'discount',
+        component: () => import('@/views/Discount.vue')
+      },
+      {
+        path: 'order',
+        name: 'Order',
+        component: () => import('@/views/Order.vue')
+      },
+      {
+        path: 'course',
+        name: 'Course',
+        component: () => import('@/views/Course.vue')
+      },
+      {
+        path: 'administrator',
+        name: 'Administrator',
+        component: () => import('@/views/Administrator.vue')
+      }
+    ]
   },
   {
-    path: '/category',
-    name: 'category',
-    component: () => import(/* webpackChunkName: "category" */ "@/views/About.vue"),
-    meta: {requireAuth: true}
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: () => import(/* webpackChunkName: "about" */"@/views/About.vue"),
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/Profile.vue"),
-    meta: {requireAuth: true},
-  },
-  {
-    path: '/cart',
-    name: 'cart',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/Cart.vue")
-    // meta: {requireAuth: true},
-    // beforeEnter: (to,from,next) => {
-    //   const userInfor = JSON.parse(localStorage.getItem('user-info') || '{}')
-    //   if(userInfor.username == 'admin'){
-    //     console.log("Before Enter")
-    //     console.log("Người dùng có quyền admin")
-    //     next()
-    //   } else {
-    //     console.log("Người dùng không phải là admin")
-    //     next({name: 'home'})
-    //   }
-    // }
-  },
-  {
-    path:'/book/:id',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/BookDetail.vue")
+    path: '/',
+    component: AuthLayout,
+    children: [
+      {
+        path: 'signIn',
+        name: 'signIn',
+        component: () => import('@/views/SignIn.vue')
+      },
+      {
+        path: 'signUp',
+        name: 'signUp',
+        component: () => import('@/views/SignUp.vue')
+      }
+    ]
   }
-  ,
-  {
-    path: '/categoryBook/:id',
-    name: 'categoryBook',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/ListVerticalBook.vue")
-  },
-  {
-    path: '/signIn',
-    name: 'signIn',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/SignIn.vue")
-  }, 
-  {
-    path: '/signUp',
-    name: 'signUp',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/SignUp.vue")
-  },
-  {
-    path: '/discount',
-    name: 'discount',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/Discount.vue")
-  },
-  {
-    path: '/event',
-    name: 'event',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/Event.vue")
-  },
-  {
-    path: '/course',
-    name: 'Course',
-    component: () => import(/* webpackChunkName: "profile" */"@/views/Course.vue")
-  }
-    
-  ]
+]
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -2,10 +2,17 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Swal from 'sweetalert2'
+import { useAddToCart } from '@/composable/useAddToCart'
+import { formatPrice } from '@/util/formatPrice'
+
+
 const route = useRoute()
 const book = ref({})
 const quantity = ref(1)
+const { addToCart } = useAddToCart();
 
+
+// Lay thong tin chi tiet sach dua tren id
 onMounted(async () => {
   try {
     const response = await fetch(`http://localhost:8080/api/v1/book/${route.params.id}`)
@@ -15,32 +22,6 @@ onMounted(async () => {
     console.error('Failed to fetch book:', error)
   }
 })
-
-const formatPrice = (price) => {
-  if (!price || isNaN(price)) return 'N/A'
-  return Number(price).toLocaleString('vi-VN') + 'đ'
-}
-
-const handleAddCart = () => {
-  localStorage.removeItem("cart")
-  const listBook = localStorage.getItem('list')
-  const list = listBook ? JSON.parse(listBook) : []
-  const existingItem = list.find(item => item.book.id === book.value.id)
-  if (existingItem) {
-    existingItem.number += quantity.value
-  } else {
-    list.push({
-      book: book.value,
-      number: quantity.value
-    })
-  }
-  localStorage.setItem('list', JSON.stringify(list))
-
-  Swal.fire({
-    title: "Thêm vào giỏ hàng thành công!",
-    icon: "success"
-  })
-}
 
 const increaseQty = () => quantity.value++
 const decreaseQty = () => {
@@ -64,10 +45,8 @@ const decreaseQty = () => {
       <p class="isbn">Mã ISBN: <strong>{{ book.isbn }}</strong></p>
       <div class="status">
         <p>Tình trạng: 
-          <span v-if="book.stock > 0">Còn hàng</span>
-          <span v-else>Hết hàng</span>
+          <span :class="book.stock > 0 ? 'in-stock': 'out-of-stock'">{{ book.stock > 0 ? 'Còn hàng': 'Hết hàng' }}</span>
         </p>
-       
         <p>Nhà xuất bản: <span>
           {{ book.publisher}}
         </span></p>
@@ -86,8 +65,8 @@ const decreaseQty = () => {
       </div>
 
       <div class="actions">
-        <button class="add-to-cart" @click="handleAddCart()">THÊM VÀO GIỎ</button>
-        <button class="buy-now">MUA NGAY</button>
+        <button class="add-to-cart" @click="addToCart(book.id,quantity)" :disabled="book.stock <= 0">THÊM VÀO GIỎ</button>
+        <button class="buy-now" :disabled="book.stock <= 0">MUA NGAY</button>
       </div>
 
       <div class="description">
@@ -263,6 +242,21 @@ const decreaseQty = () => {
 }
 .status p {
    font-weight: 600;
+}
+
+.add-to-cart:disabled,
+.buy-now:disabled {
+  background-color: #ccc;       
+  color: #666;                   
+  cursor: not-allowed;           
+  opacity: 0.7;                 
+  pointer-events: none;        
+}
+.in-stock {
+  color: #f1653b;
+}
+.out-of-stock{
+  color: #e53935;
 }
 
 </style>

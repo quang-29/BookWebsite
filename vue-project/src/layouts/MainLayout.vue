@@ -1,11 +1,7 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HomeView from './views/HomeView.vue';
-import Header from './components/Header.vue';
-import NavBar from './components/NavBar.vue';
-import { useFetchData } from './composable/useFetchData';
-import ImageView from '@/components/ImageView.vue';
-
+import Header from '@/components/Header.vue'
+import NavBar from '@/components/NavBar.vue';
+import { useFetchData } from '@/composable/useFetchData';
 import { ref, onMounted } from 'vue'
 
 const categories = ref(null)
@@ -19,22 +15,15 @@ onMounted(async () => {
   isLoading.value = loading.value
   hasError.value = error.value
 })
-
 </script>
-
 <template>
-  <div class="nav">
-    <!-- <Header></Header>
+    <Header></Header>
     <NavBar
       :listcategories="categories"
       :isLoading="isLoading"
       :isError="hasError"
-      /> -->
-    
-    <router-view />
-  </div>
+      /> 
+  <router-view />
 </template>
 
 
-<style >
-</style>

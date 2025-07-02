@@ -45,7 +45,7 @@ defineProps({
         <li v-if="isError">Không thể tải danh mục</li>
         <li v-else-if="isLoading">Đang tải danh mục...</li>
         <li v-else-if="listcategories.length === 0">Không có danh mục</li>
-        <li v-else v-for="category in listcategories" :key="category.id">
+        <li v-else v-for="category in listcategories" :key="category.id" class="category-list-item">
           <div class="category-card" @click="handleDirect(category.id)">
             {{ category.name }}
           </div>
@@ -57,12 +57,12 @@ defineProps({
       <button class="btn"><span>Discount Deals</span></button>
     </RouterLink>
     
-    <RouterLink :style="{ backgroundColor: 'white' }">
+    <RouterLink to="/order" :style="{ backgroundColor: 'white' }">
       <button class="btn"><span>Gifs & Others</span></button>
     </RouterLink>
     
-    <RouterLink to="/event" :style="{ backgroundColor: 'white' }">
-      <button class="btn"><span>Events</span></button>
+    <RouterLink to="/order" :style="{ backgroundColor: 'white' }">
+      <button class="btn"><span>All Orders</span></button>
     </RouterLink>
     
 
@@ -98,6 +98,7 @@ defineProps({
   display: flex;
   align-items: center;
   margin-top: 10px;
+  z-index: 1000;
 }
 .category-list {
   display: flex;
@@ -126,5 +127,8 @@ defineProps({
 }
 .dropdown-menu li:hover {
   background-color: #f1f1f1;
+}
+.category-list-item{
+  z-index: 999;
 }
 </style>

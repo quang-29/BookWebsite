@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import CourseContent from '@/components/course/CourseContent.vue'
 import CourseInfor from '@/components/course/CourseInfor.vue'
 import CourseProgress from '@/components/course/CourseProgress.vue'
 import CourseCollapse from '@/components/course/CourseCollapse.vue'

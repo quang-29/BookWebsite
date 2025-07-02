@@ -1,13 +1,12 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
-import Header from '@/components/Header.vue';
-import NavBar from  '@/components/NavBar.vue';
 import ImageView from '@/components/ImageView.vue';
 import CategoryView from '@/components/CategoryView.vue';
-import BookCard from '@/components/BookCard.vue';
+import BookList from '@/components/book/BookList.vue';
 import { useFetchData } from '@/composable/useFetchData';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
+import Header from '@/components/Header.vue';
+import NavBar from '@/components/NavBar.vue';
 
 const categories = ref(null)
 const isLoading = ref(true)
@@ -29,13 +28,13 @@ onMounted(async () => {
   <main>
 
     <div class="nav">
-      <ImageView></ImageView>
+      <ImageView />
       <CategoryView :listcategories="categories"
                   :isLoading="isLoading"
                   :isError="hasError"
 
-      ></CategoryView>
-      <BookCard></BookCard>
+      />
+      <BookList />
     </div>
 
   </main>

@@ -1,110 +1,124 @@
 <script setup>
-import {reactive, ref} from 'vue'
+import { reactive, ref } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
 
 
 const user = reactive({
-    username: '',
-    password: ''
+  email: '',
+  password: ''
+})
+
+const user_info = reactive({
+  id: '',
+  email: '',
+  username: ''
+
 })
 const router = useRouter()
 
 const handleSignIn = async () => {
-    console.log(user)
+  console.log(user)
 
-    if (user.username =='' || user.password == ''){
-        Swal.fire({
-        title: "Vui lòng nhập đủ thông tin",
-        icon: "warning",
-        draggable: true
-        });
-        return;
-    }
-    try {
-        const result = await axios.post("http://localhost:8080/api/auth/login", {
-        username: user.username,
-        password: user.password
+  if (user.email == '' || user.password == '') {
+    Swal.fire({
+      title: "Vui lòng nhập đủ thông tin",
+      icon: "warning",
+      draggable: true
+    });
+    return;
+  }
+  try {
+    const result = await axios.post("http://localhost:8080/api/v1/user/login", {
+      email: user.email,
+      password: user.password
     });
     if (result.status === 200) {
-      localStorage.setItem('user-info', JSON.stringify(user));
-      localStorage.setItem('token', result.data.data.token);
+      const token = result.data.token;
+      user_info.id = result.data.id
+      user_info.email = result.data.email
+      user_info.username = result.data.username
+      localStorage.setItem('user-info', JSON.stringify(user_info));
+      localStorage.setItem('token', token);
+
       Swal.fire({
         title: "Đăng nhập thành công!",
         icon: "success",
         draggable: true
-        });
-        router.push({name: 'home'})
+      });
+      router.push({ name: 'home' }).then(() => {
+        window.location.reload()
+      })
 
     }
-    } catch (error) {
-        if (error.response) {
-        Swal.fire({
+  } catch (error) {
+    if (error.response) {
+      Swal.fire({
         title: error.response.data.message,
         icon: "error",
         draggable: true
-        });
-        } else {
-        Swal.fire({
+      });
+    } else {
+      Swal.fire({
         title: "Không thể kết nối đến server. Vui lòng thử lại sau!",
         icon: "error",
         draggable: true
-        });
-        }
-        console.error("Chi tiết lỗi:", error);
+      });
     }
+    console.error("Chi tiết lỗi:", error);
+  }
 }
 
 const handleLogIn = () => {
-    router.push({name: 'home'})
+  router.push({ name: 'home' })
 }
 
 </script>
 
 
 <template>
-       <div class="container">
-        <div class="image-section">
-            <div class="overlay"></div>
-        </div>
-        
-        <div class="signup-section">
-            <div class="signup-container">
-            <h2>LOG IN</h2>
-                <div class="form-section">
-                    <span class="label">
-                        Username
-                    </span>
-                    <input v-model="user.username" type="email" placeholder="Username..." name="gmail">
-                </div>
-                <div class="form-section">
-                    <span class="label">
-                        Password
-                    </span>
-                    <input v-model="user.password" type="password" placeholder="Password..." name="password">
-                </div>
-                <button class="btn-submit" @click="handleSignIn">
-                    LOG IN
-                </button>
-
-                <div class="addition-info">
-                    <span class="signup">
-                        <RouterLink to='/signUp' class="signup-link">Sign Up</RouterLink>
-                        </span>
-                    <span class="forgetPassword">Quên mật khẩu?</span>
-                </div>
-
-        </div>
-        </div>
-        
+  <div class="container">
+    <div class="image-section">
+      <div class="overlay"></div>
     </div>
+
+    <div class="signup-section">
+      <div class="signup-container">
+        <h2>LOG IN</h2>
+        <div class="form-section">
+          <span class="label">
+            Email
+          </span>
+          <input v-model="user.email" type="email" placeholder="Email..." name="gmail">
+        </div>
+        <div class="form-section">
+          <span class="label">
+            Password
+          </span>
+          <input v-model="user.password" type="password" placeholder="Password..." name="password">
+        </div>
+        <button class="btn-submit" @click="handleSignIn">
+          LOG IN
+        </button>
+
+        <div class="addition-info">
+          <span class="signup">
+            <RouterLink to='/signUp' class="signup-link">Sign Up</RouterLink>
+          </span>
+          <span class="forgetPassword">Quên mật khẩu?</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </template>
 
 
 <style>
-
-.html, body {
+.html,
+body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -206,25 +220,30 @@ input:focus {
 .btn-submit:hover {
   background-color: #005ed3;
 }
+
 .addition-info {
-    color: black;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
+  color: black;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
 }
+
 .forgetPassword {
-    color: #ff4d4d;   
-    cursor: pointer;
+  color: #ff4d4d;
+  cursor: pointer;
 }
+
 .addition-info .forgetPassword:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 
 }
+
 .addition-info .signup {
-     cursor: pointer;
+  cursor: pointer;
 }
+
 .signup-link {
   color: #0077ff;
   text-decoration: none;
