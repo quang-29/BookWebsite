@@ -42,14 +42,16 @@ const handleSignIn = async () => {
       localStorage.setItem('user-info', JSON.stringify(user_info));
       localStorage.setItem('token', token);
 
-      Swal.fire({
-        title: "Đăng nhập thành công!",
-        icon: "success",
-        draggable: true
-      });
-      router.push({ name: 'home' }).then(() => {
+
+      if(user_info.email == 'admin@gmail.com'){
+        router.push('administrator')
+      } else {
+        router.push({ name: 'home' }).then(() => {
         window.location.reload()
       })
+      }
+      
+      
 
     }
   } catch (error) {

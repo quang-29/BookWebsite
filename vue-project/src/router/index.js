@@ -81,11 +81,6 @@ const routes = [
         path: 'course',
         name: 'Course',
         component: () => import('@/views/Course.vue')
-      },
-      {
-        path: 'administrator',
-        name: 'Administrator',
-        component: () => import('@/views/Administrator.vue')
       }
     ]
   },
@@ -102,6 +97,17 @@ const routes = [
         path: 'signUp',
         name: 'signUp',
         component: () => import('@/views/SignUp.vue')
+      },
+      {
+        path: 'administrator',
+        name: 'Administrator',
+        component: () => import('@/views/Administrator.vue'),
+        meta: { requireAuth: true }
+      },
+      {
+        path: 'Screen',
+        name: 'Screen',
+        component: () => import('@/views/ShowAllScreen.vue')
       }
     ]
   }
@@ -112,20 +118,20 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
-//  router.beforeEach((to, from, next) => {
-//     const isLoggIn = localStorage.getItem('token')
-//     if(to.meta.requireAuth && !isLoggIn){
-//       console.log("Before Each")
-//       console.log("Chưa đăng nhập, chuyển về LogIn")
-//       next({name: 'signIn'})
-//     } else {
-//       next()
-//     }
-//   })
+ router.beforeEach((to, from, next) => {
+    const isLoggIn = localStorage.getItem('token')
+    if(to.meta.requireAuth && !isLoggIn){
+      console.log("Before Each")
+      console.log("Chưa đăng nhập, chuyển về LogIn")
+      next({name: 'signIn'})
+    } else {
+      next()
+    }
+  })
 
-//   router.beforeResolve((to,from,next) => {
-//     console.log("Before Resolve")
-//     next()
-//   })
+  router.beforeResolve((to,from,next) => {
+    console.log("Before Resolve")
+    next()
+  })
 
 export default router

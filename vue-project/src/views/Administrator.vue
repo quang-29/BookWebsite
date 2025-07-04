@@ -15,60 +15,57 @@
             <el-icon><collection /></el-icon>
             <span>Quản lý sách</span>
           </el-menu-item>
+          <el-menu-item index="categories">
+            <el-icon><BookAudio /></el-icon>
+            <span>Quản lý danh mục</span>
+          </el-menu-item>
+          <el-menu-item index="authors">
+            <el-icon><PercentSquareIcon /></el-icon>
+            <span>Quản lý tác giả</span>
+          </el-menu-item>
           <el-menu-item index="users">
             <el-icon><user /></el-icon>
             <span>Quản lý người dùng</span>
+          </el-menu-item>
+          <el-menu-item index="logout">
+            <el-icon><LogOut /></el-icon>
+            <span>Đăng xuất</span>
           </el-menu-item>
         </el-menu>
       </el-scrollbar>
     </el-aside>
 
     <el-container>
-      <el-header style="text-align: right; font-size: 12px">
-        <div class="toolbar">
-          <el-dropdown>
-            <el-icon style="margin-right: 8px; margin-top: 1px">
-              <setting />
-            </el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>View</el-dropdown-item>
-                <el-dropdown-item>Add</el-dropdown-item>
-                <el-dropdown-item>Delete</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          <span>Tom</span>
-        </div>
-      </el-header>
-
       <el-main>
         <el-scrollbar>
           <div v-if="activeTab === 'orders'">
-            <h3>Danh sách đơn hàng</h3>
-            <el-table :data="tableData">
-              <el-table-column prop="date" label="Ngày" width="140" />
-              <el-table-column prop="name" label="Khách hàng" width="120" />
-              <el-table-column prop="address" label="Địa chỉ" />
-            </el-table>
+            <OrderManagement />
           </div>
 
           <div v-else-if="activeTab === 'books'">
-            <h3>Danh sách sách</h3>
             <el-table :data="bookData">
-              <el-table-column prop="title" label="Tiêu đề" />
-              <el-table-column prop="author" label="Tác giả" />
-              <el-table-column prop="year" label="Năm" width="100" />
+              <BookManagement />
             </el-table>
           </div>
 
+          <div v-else-if="activeTab === 'categories'">
+            <CategoryManagement />
+          </div>
+
+          <div v-else-if="activeTab === 'authors'">
+            <p>Danh sách tác giả sẽ được hiển thị tại đây.</p>
+          </div>
+
           <div v-else-if="activeTab === 'users'">
-            <h3>Danh sách người dùng</h3>
             <el-table :data="userData">
               <el-table-column prop="username" label="Tên đăng nhập" />
               <el-table-column prop="email" label="Email" />
               <el-table-column prop="role" label="Vai trò" width="100" />
             </el-table>
+          </div>
+
+          <div v-else-if="activeTab === 'logout'">
+            <p>Bạn đã đăng xuất.</p>
           </div>
         </el-scrollbar>
       </el-main>
@@ -76,19 +73,21 @@
   </el-container>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { ref } from 'vue'
 import {
-  Menu as IconMenu,
-  Setting,
   Document,
   Collection,
   User,
 } from '@element-plus/icons-vue'
+import { BookAudio, LogOut, PercentSquareIcon } from 'lucide-vue-next'
+import OrderManagement from '@/components/admin/OrderManagement.vue'
+import CategoryManagement from '@/components/admin/CategoryManagement.vue'
+import BookManagement from '@/components/admin/BookManagement.vue'
 
 const activeTab = ref('orders')
 
-const handleMenuSelect = (key: string) => {
+const handleMenuSelect = (key) => {
   activeTab.value = key
 }
 

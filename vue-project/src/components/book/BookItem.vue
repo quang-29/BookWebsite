@@ -112,12 +112,12 @@ const { addToCart } = useAddToCart();
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.15rem;
+  font-size: 1rem;
 }
 
 .original-price {
   color: #d63532;
-  font-size: 1.15rem;
+  font-size: 1rem;
 
   
 }
@@ -125,7 +125,7 @@ const { addToCart } = useAddToCart();
   font-weight: bold;
   text-decoration: line-through;
   color: #888;
-  font-size: 1.15rem;
+  font-size: 1rem;
 
 }
 
@@ -141,7 +141,6 @@ const { addToCart } = useAddToCart();
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.15rem;
     margin-bottom: 10px;
 }
 .book-sold {
@@ -173,4 +172,6 @@ const { addToCart } = useAddToCart();
     align-items: center;
     margin-top: 5px;
 }
+
+
 </style>

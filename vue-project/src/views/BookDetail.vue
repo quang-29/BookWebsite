@@ -190,6 +190,7 @@ const decreaseQty = () => {
   column-gap: 16px;
   margin-bottom: 32px;
   align-items: center;
+  margin-top: 32px;
 }
 
 .add-to-cart {
@@ -201,6 +202,7 @@ const decreaseQty = () => {
   border-radius: 6px;
   cursor: pointer;
   height: 60px;
+  margin: 0;
 }
 
 .buy-now {
